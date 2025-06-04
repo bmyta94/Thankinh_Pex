@@ -10,7 +10,7 @@ class WifiService {
       onConnectionInitiated: (id, connectionInfo) {
         Nearby().acceptConnection(
           id,
-          onPayLoadReceived: (endpointId, payload) {
+          (endpointId, payload) {
             final data = String.fromCharCodes(payload.bytes!);
             onDataReceived(endpointId, data);
           },
@@ -28,7 +28,7 @@ class WifiService {
       onConnectionInitiated: (id, connectionInfo) {
         Nearby().acceptConnection(
           id,
-          onPayLoadReceived: (endpointId, payload) {
+          (endpointId, payload) {
             final data = String.fromCharCodes(payload.bytes!);
             onDataReceived(endpointId, data);
           },
