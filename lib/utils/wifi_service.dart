@@ -10,10 +10,13 @@ class WifiService {
       onConnectionInitiated: (id, connectionInfo) {
         Nearby().acceptConnection(
           id,
-          onPayLoadReceived: (id, payload) {
-            final data = String.fromCharCodes(payload.bytes!);
-            onDataReceived(id, data);
+          onPayloadReceived: (endpointId, payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(endpointId, data);
+            }
           },
+          onPayloadTransferUpdate: (endpointId, update) {},
         );
       },
       onConnectionResult: (id, status) {},
@@ -28,10 +31,13 @@ class WifiService {
       onConnectionInitiated: (id, connectionInfo) {
         Nearby().acceptConnection(
           id,
-          onPayLoadReceived: (id, payload) {
-            final data = String.fromCharCodes(payload.bytes!);
-            onDataReceived(id, data);
+          onPayloadReceived: (endpointId, payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(endpointId, data);
+            }
           },
+          onPayloadTransferUpdate: (endpointId, update) {},
         );
       },
       onConnectionResult: (id, status) {},
