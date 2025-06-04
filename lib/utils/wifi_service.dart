@@ -2,47 +2,51 @@ import 'package:nearby_connections/nearby_connections.dart';
 
 class WifiService {
   final Strategy strategy = Strategy.P2P_CLUSTER;
-  final NearbyService _nearbyService = NearbyService();
-  final String userName;
 
-  WifiService({required this.userName});
-
-  Future<void> init(Function(String deviceId, String payload) onReceived) async {
-    await _nearbyService.init(
-      serviceType: 'pex-sharing',
-      deviceName: userName,
-      strategy: strategy,
-      onConnectionInitiated: (id, info) {
-        _nearbyService.acceptConnection(id);
+  void startAdvertising(String userName, Function(String id, String data) onDataReceived) {
+    Nearby().startAdvertising(
+      userName,
+      strategy,
+      onConnectionInitiated: (id, connectionInfo) {
+        Nearby().acceptConnection(
+          id,
+          onPayloadReceived: (endpointId, payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(endpointId, data);
+            }
+          },
+          onPayloadTransferUpdate: (endpointId, update) {},
+        );
       },
-      onConnectionResult: (id, status) {
-        // Handle connection result if needed
-      },
-      onDisconnected: (id) {
-        // Handle disconnection
-      },
-      onPayloadReceived: (id, payload) {
-        if (payload.type == PayloadType.BYTES) {
-          final String message = String.fromCharCodes(payload.bytes!);
-          onReceived(id, message);
-        }
-      },
+      onConnectionResult: (id, status) {},
+      onDisconnected: (id) {},
     );
-
-    await _nearbyService.startBrowsingForPeers();
-    await _nearbyService.startAdvertisingPeer();
   }
 
-  void send(String deviceId, String message) {
-    final payload = Payload.fromBytes(message.codeUnits);
-    _nearbyService.sendPayload(deviceId, payload);
+  void startDiscovery(Function(String id, String data) onDataReceived) {
+    Nearby().startDiscovery(
+      "Receiver",
+      strategy,
+      onConnectionInitiated: (id, connectionInfo) {
+        Nearby().acceptConnection(
+          id,
+          onPayloadReceived: (endpointId, payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(endpointId, data);
+            }
+          },
+          onPayloadTransferUpdate: (endpointId, update) {},
+        );
+      },
+      onConnectionResult: (id, status) {},
+      onDisconnected: (id) {},
+    );
   }
 
-  Future<void> stop() async {
-    await _nearbyService.stopBrowsingForPeers();
-    await _nearbyService.stopAdvertisingPeer();
+  void stopAll() {
+    Nearby().stopAdvertising();
+    Nearby().stopDiscovery();
   }
-
-  Stream<DiscoveredEndpoint> get discoveredEndpointsStream =>
-      _nearbyService.discoveredEndpoints;
 }
