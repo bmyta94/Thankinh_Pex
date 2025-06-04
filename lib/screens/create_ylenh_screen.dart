@@ -76,15 +76,17 @@ class _CreateYLenhScreenState extends State<CreateYLenhScreen> {
             const SizedBox(height: 20),
             Center(
               child: ElevatedButton.icon(
-                onPressed: () async {
+                onPressed: () {
                   final ten = tenController.text;
                   final tuoi = tuoiController.text;
                   final qua = quaLocController.text;
                   final dich = dichLocController.text;
                   final message = 'Y lệnh: $ten, $tuoi tuổi, Quả lọc: $qua, Dịch lọc: $dich';
-                  await wifi.startDiscovery((id, data) {
+
+                  wifi.startDiscovery((id, data) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nhận từ $id: $data")));
                   });
+
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Đang tìm thiết bị...")));
                 },
                 icon: const Icon(Icons.send),
