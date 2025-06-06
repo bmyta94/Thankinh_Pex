@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class FormDieuDuongScreen extends StatefulWidget {
   final Map<String, String> formData;
@@ -26,12 +28,10 @@ class _FormDieuDuongScreenState extends State<FormDieuDuongScreen> {
   }
 
   void _initControllers() {
-    // Chuyển dữ liệu đã nhận thành controller
     for (var entry in widget.formData.entries) {
       controllers[entry.key] = TextEditingController(text: entry.value);
     }
 
-    // Thêm các dòng theo dõi nếu chưa có
     for (int row = 0; row < 5; row++) {
       for (int col = 0; col < 8; col++) {
         final key = "ts_${row}_$col";
@@ -41,7 +41,6 @@ class _FormDieuDuongScreenState extends State<FormDieuDuongScreen> {
       }
     }
 
-    // Thêm các trường điều dưỡng cần nhập nếu chưa có
     for (var key in ["ketThuc", "tongThoiGian", "ufTong", "tongDichLoc"]) {
       controllers.putIfAbsent(key, () => TextEditingController());
     }
@@ -91,6 +90,25 @@ class _FormDieuDuongScreenState extends State<FormDieuDuongScreen> {
         },
       ),
     );
+  }
+
+  Future<void> _luuLichSu() async {
+    final submittedForm = <String, String>{};
+    controllers.forEach((key, value) {
+      submittedForm[key] = value.text;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final existing = prefs.getStringList('y_lenh_da_tra_loi') ?? [];
+
+    existing.add(json.encode({
+      "bacSi": widget.bacSi,
+      "dieuDuong": widget.dieuDuong,
+      "form": submittedForm,
+      "time": DateTime.now().toIso8601String(),
+    }));
+
+    await prefs.setStringList('y_lenh_da_tra_loi', existing);
   }
 
   @override
@@ -174,11 +192,12 @@ class _FormDieuDuongScreenState extends State<FormDieuDuongScreen> {
             const SizedBox(height: 24),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Gửi báo cáo hoặc xác nhận
+                onPressed: () async {
+                  await _luuLichSu();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Đã xác nhận thông tin.")),
+                    const SnackBar(content: Text("Đã lưu vào Lịch sử theo dõi.")),
                   );
+                  Navigator.pop(context);
                 },
                 child: const Text("Xác nhận"),
               ),
@@ -189,4 +208,3 @@ class _FormDieuDuongScreenState extends State<FormDieuDuongScreen> {
     );
   }
 }
-
