@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'network/wifi_broadcast.dart'; 
 
 class ReadOnlyFormScreen extends StatelessWidget {
   final Map<String, String> formData;
@@ -60,38 +61,28 @@ class ReadOnlyFormScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () async {
-              final selectedDevice = await showDialog<String>(
+              await WifiBroadcast.sendForm({
+                "from": "$userTitle - $userName",
+                "form": formData,
+              });
+
+              if (!context.mounted) return;
+
+              showDialog(
                 context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text("Chọn thiết bị nhận"),
-                  content: const Text("→ (Tại đây sẽ hiện danh sách iPhone nội bộ)"),
+                builder: (_) => AlertDialog(
+                  content: const Text("Đã gửi y lệnh thành công."),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.pop(ctx, "device1"),
-                      child: const Text("Thiết bị A"),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // đóng dialog
+                        Navigator.of(context).pop(); // về form_screen
+                      },
+                      child: const Text("OK"),
                     ),
                   ],
                 ),
               );
-
-              if (selectedDevice != null) {
-                // TODO: Gửi dữ liệu mạng nội bộ ở phần 2
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    content: const Text("Đã gửi y lệnh thành công."),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // đóng dialog
-                          Navigator.of(context).pop(); // về form_screen
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  ),
-                );
-              }
             },
             child: const Text("Xác nhận", style: TextStyle(color: Colors.white)),
           )
@@ -181,4 +172,3 @@ class ReadOnlyFormScreen extends StatelessWidget {
     );
   }
 }
-
