@@ -9,14 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.6
-
   signature: ^5.4.0
-   udp: ^5.0.2
+  udp: ^5.0.2
   multicast_dns: ^0.3.0
   shared_preferences: ^2.2.2
-
 
 dev_dependencies:
   flutter_test:
@@ -24,4 +21,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
