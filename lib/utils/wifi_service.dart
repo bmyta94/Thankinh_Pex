@@ -8,20 +8,19 @@ class WifiService {
       userName,
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
-        Nearby().acceptConnection(id);
+        Nearby().acceptConnection(
+          id,
+          onPayLoadRecieved: (payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(id, data);
+            }
+          },
+        );
       },
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
     );
-
-    if (advertisingStarted) {
-      Nearby().setOnPayloadReceivedListener((endpointId, payload) {
-        if (payload.type == PayloadType.BYTES) {
-          final data = String.fromCharCodes(payload.bytes!);
-          onDataReceived(endpointId, data);
-        }
-      });
-    }
   }
 
   void startDiscovery(Function(String id, String data) onDataReceived) async {
@@ -29,20 +28,19 @@ class WifiService {
       "Receiver",
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
-        Nearby().acceptConnection(id);
+        Nearby().acceptConnection(
+          id,
+          onPayLoadRecieved: (payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(id, data);
+            }
+          },
+        );
       },
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
     );
-
-    if (discoveryStarted) {
-      Nearby().setOnPayloadReceivedListener((endpointId, payload) {
-        if (payload.type == PayloadType.BYTES) {
-          final data = String.fromCharCodes(payload.bytes!);
-          onDataReceived(endpointId, data);
-        }
-      });
-    }
   }
 
   void stopAll() {
