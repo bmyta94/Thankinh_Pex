@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'form_screen.dart';
+import 'danh_sach_y_lenh.dart'; // màn hình dành cho điều dưỡng
 import 'read_only_form.dart';
 import 'network/wifi_broadcast.dart';
 
@@ -82,12 +83,13 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController titleController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final SignatureController signatureController = SignatureController(
     penStrokeWidth: 2,
     penColor: Colors.black,
   );
+
+  String selectedRole = "Bác sĩ";
 
   @override
   Widget build(BuildContext context) {
@@ -97,13 +99,17 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            const Text('Chức danh nghề nghiệp'),
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'VD: Bác sĩ, Điều dưỡng...',
-              ),
+            const Text('Vai trò'),
+            DropdownButton<String>(
+              value: selectedRole,
+              isExpanded: true,
+              items: const [
+                DropdownMenuItem(value: "Bác sĩ", child: Text("Bác sĩ")),
+                DropdownMenuItem(value: "Điều dưỡng", child: Text("Điều dưỡng")),
+              ],
+              onChanged: (value) {
+                if (value != null) setState(() => selectedRole = value);
+              },
             ),
             const SizedBox(height: 16),
             const Text('Họ tên đầy đủ'),
@@ -129,24 +135,34 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                if (titleController.text.isEmpty ||
-                    nameController.text.isEmpty ||
-                    signatureController.isEmpty) {
+                if (nameController.text.isEmpty || signatureController.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
                   );
                   return;
                 }
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PexFormScreen(
-                      userTitle: titleController.text,
-                      userName: nameController.text,
+                if (selectedRole == "Bác sĩ") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PexFormScreen(
+                        userTitle: selectedRole,
+                        userName: nameController.text,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DanhSachYLenhScreen(
+                        userTitle: selectedRole,
+                        userName: nameController.text,
+                      ),
+                    ),
+                  );
+                }
               },
               child: const Text('Đăng nhập'),
             ),
