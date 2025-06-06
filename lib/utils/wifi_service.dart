@@ -8,12 +8,15 @@ class WifiService {
       userName,
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
-        Nearby().acceptConnection(id, (payload) {
-          if (payload.type == PayloadType.BYTES) {
-            final data = String.fromCharCodes(payload.bytes!);
-            onDataReceived(id, data);
-          }
-        });
+        Nearby().acceptConnection(
+          id,
+          (payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(id, data);
+            }
+          },
+        );
       },
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
@@ -25,12 +28,15 @@ class WifiService {
       "Receiver",
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
-        Nearby().acceptConnection(id, (payload) {
-          if (payload.type == PayloadType.BYTES) {
-            final data = String.fromCharCodes(payload.bytes!);
-            onDataReceived(id, data);
-          }
-        });
+        Nearby().acceptConnection(
+          id,
+          (payload) {
+            if (payload.type == PayloadType.BYTES) {
+              final data = String.fromCharCodes(payload.bytes!);
+              onDataReceived(id, data);
+            }
+          },
+        );
       },
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
