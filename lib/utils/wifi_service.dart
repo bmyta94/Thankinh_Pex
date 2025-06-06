@@ -4,17 +4,14 @@ class WifiService {
   final Strategy strategy = Strategy.P2P_CLUSTER;
 
   void startAdvertising(String userName, Function(String id, String data) onDataReceived) async {
-    bool advertisingStarted = await Nearby().startAdvertising(
+    await Nearby().startAdvertising(
       userName,
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
         Nearby().acceptConnection(
           id,
-          onPayLoadRecieved: (payload) {
-            if (payload.type == PayloadType.BYTES) {
-              final data = String.fromCharCodes(payload.bytes!);
-              onDataReceived(id, data);
-            }
+          onPayLoadRecieved: (payloadStr) {
+            onDataReceived(id, payloadStr);
           },
         );
       },
@@ -24,17 +21,14 @@ class WifiService {
   }
 
   void startDiscovery(Function(String id, String data) onDataReceived) async {
-    bool discoveryStarted = await Nearby().startDiscovery(
+    await Nearby().startDiscovery(
       "Receiver",
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
         Nearby().acceptConnection(
           id,
-          onPayLoadRecieved: (payload) {
-            if (payload.type == PayloadType.BYTES) {
-              final data = String.fromCharCodes(payload.bytes!);
-              onDataReceived(id, data);
-            }
+          onPayLoadRecieved: (payloadStr) {
+            onDataReceived(id, payloadStr);
           },
         );
       },
