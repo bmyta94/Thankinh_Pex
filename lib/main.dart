@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
+import 'form_screen.dart'; // import màn hình chính
 
 void main() {
   runApp(const ThankinhPexApp());
@@ -85,12 +86,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   return;
                 }
 
-                // Tạm thời lưu thông tin trong bộ nhớ
-                final userTitle = titleController.text;
-                final userName = nameController.text;
-                print("Đăng nhập với: $userTitle - $userName");
-
-                // TODO: Điều hướng sang màn hình chính sau khi đăng nhập
+                // Điều hướng sang màn hình phiếu theo dõi PEX
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PexFormScreen(
+                      userTitle: titleController.text,
+                      userName: nameController.text,
+                    ),
+                  ),
+                );
               },
               child: const Text('Đăng nhập'),
             ),
