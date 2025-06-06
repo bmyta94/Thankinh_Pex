@@ -253,11 +253,21 @@ class _PexFormScreenState extends State<PexFormScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              // TODO: xử lý lưu hoặc gửi y lệnh
-            },
-            child: const Text("Tạo y lệnh"),
-          ),
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ReadOnlyFormScreen(
+          formData: formData,
+          userTitle: widget.userTitle,
+          userName: widget.userName,
+        ),
+      ),
+    );
+  },
+  child: const Text("Tạo y lệnh"),
+),
+
         ],
       ),
     );
