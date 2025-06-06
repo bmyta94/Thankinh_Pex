@@ -8,13 +8,7 @@ class WifiService {
       userName,
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
-        Nearby().acceptConnection(
-          id,
-          (endpointId, payload) {
-            final data = String.fromCharCodes(payload.bytes!);
-            onDataReceived(endpointId, data);
-          },
-        );
+        Nearby().acceptConnection(id, onDataReceivedCallback(id, onDataReceived));
       },
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
@@ -26,13 +20,7 @@ class WifiService {
       "Receiver",
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
-        Nearby().acceptConnection(
-          id,
-          (endpointId, payload) {
-            final data = String.fromCharCodes(payload.bytes!);
-            onDataReceived(endpointId, data);
-          },
-        );
+        Nearby().acceptConnection(id, onDataReceivedCallback(id, onDataReceived));
       },
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
@@ -42,5 +30,14 @@ class WifiService {
   void stopAll() {
     Nearby().stopAdvertising();
     Nearby().stopDiscovery();
+  }
+
+  PayloadCallback onDataReceivedCallback(String id, Function(String id, String data) handler) {
+    return (endpointId, payload) {
+      if (payload.type == PayloadType.BYTES) {
+        final data = String.fromCharCodes(payload.bytes!);
+        handler(endpointId, data);
+      }
+    };
   }
 }
