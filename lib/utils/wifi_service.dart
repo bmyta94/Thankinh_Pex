@@ -4,7 +4,7 @@ class WifiService {
   final Strategy strategy = Strategy.P2P_CLUSTER;
 
   void startAdvertising(String userName, Function(String id, String data) onDataReceived) async {
-    bool advertisingStarted = await Nearby().startAdvertising(
+    await Nearby().startAdvertising(
       userName,
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
@@ -18,11 +18,10 @@ class WifiService {
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
     );
-    print("Advertising started: $advertisingStarted");
   }
 
   void startDiscovery(Function(String id, String data) onDataReceived) async {
-    bool discoveringStarted = await Nearby().startDiscovery(
+    await Nearby().startDiscovery(
       "Receiver",
       strategy,
       onConnectionInitiated: (id, connectionInfo) {
@@ -36,7 +35,6 @@ class WifiService {
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
     );
-    print("Discovery started: $discoveringStarted");
   }
 
   void stopAll() {
