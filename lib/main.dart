@@ -26,6 +26,8 @@ class _AppWrapperState extends State<AppWrapper> {
     WifiBroadcast.listen((data) {
       final sender = data["from"];
       final receivedForm = data["form"];
+      //Lưu vào bộ nhớ trong (ứng dụng)
+  await YLenhRepository.add({"from": sender, "form": receivedForm})
 
       if (_navKey.currentContext == null) return;
 
