@@ -1,13 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import 'form_screen.dart'; // import màn hình chính
+import 'form_screen.dart';
+import 'read_only_form.dart';
+import 'network/wifi_broadcast.dart';
 
 void main() {
-  runApp(const ThankinhPexApp());
+  runApp(const AppWrapper());
 }
 
-class ThankinhPexApp extends StatelessWidget {
-  const ThankinhPexApp({super.key});
+class AppWrapper extends StatefulWidget {
+  const AppWrapper({super.key});
+
+  @override
+  State<AppWrapper> createState() => _AppWrapperState();
+}
+
+class _AppWrapperState extends State<AppWrapper> {
+  final GlobalKey<NavigatorState> _navKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WifiBroadcast.listen((data) {
+      final sender = data["from"];
+      final receivedForm = data["form"];
+
+      if (_navKey.currentContext == null) return;
+
+      showDialog(
+        context: _navKey.currentContext!,
+        builder: (_) => AlertDialog(
+          title: Text("Nhận y lệnh từ $sender"),
+          content: const Text("Bạn có muốn xem không?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(_navKey.currentContext!);
+                Navigator.push(
+                  _navKey.currentContext!,
+                  MaterialPageRoute(
+                    builder: (_) => ReadOnlyFormScreen(
+                      formData: Map<String, String>.from(receivedForm),
+                      userTitle: sender.split(" - ").first,
+                      userName: sender.split(" - ").last,
+                    ),
+                  ),
+                );
+              },
+              child: const Text("Xem"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(_navKey.currentContext!),
+              child: const Text("Hủy"),
+            )
+          ],
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +68,7 @@ class ThankinhPexApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
       ),
+      navigatorKey: _navKey,
       home: const LoginScreen(),
     );
   }
@@ -86,7 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   return;
                 }
 
-                // Điều hướng sang màn hình phiếu theo dõi PEX
                 Navigator.push(
                   context,
                   MaterialPageRoute(
