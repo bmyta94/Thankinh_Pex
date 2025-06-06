@@ -4,6 +4,7 @@ import 'form_screen.dart';
 import 'danh_sach_y_lenh.dart'; // màn hình dành cho điều dưỡng
 import 'read_only_form.dart';
 import 'network/wifi_broadcast.dart';
+import 'repository/y_lenh_repository.dart';
 
 void main() {
   runApp(const AppWrapper());
@@ -23,11 +24,12 @@ class _AppWrapperState extends State<AppWrapper> {
   void initState() {
     super.initState();
 
-    WifiBroadcast.listen((data) {
+    WifiBroadcast.listen((data) async {
       final sender = data["from"];
       final receivedForm = data["form"];
-      //Lưu vào bộ nhớ trong (ứng dụng)
-  await YLenhRepository.add({"from": sender, "form": receivedForm})
+
+      // Lưu vào bộ nhớ trong (ứng dụng)
+      await YLenhRepository.add({"from": sender, "form": receivedForm});
 
       if (_navKey.currentContext == null) return;
 
@@ -143,6 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                   return;
                 }
+
+                // Đăng ký họ tên làm tên thiết bị để gửi qua Wi-Fi
+                WifiBroadcast.register(nameController.text);
 
                 if (selectedRole == "Bác sĩ") {
                   Navigator.push(
