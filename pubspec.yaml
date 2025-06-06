@@ -7,11 +7,12 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  dependencies:
-  flutter:
+   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
   signature: ^5.4.0
+   udp: ^5.0.2
+  multicast_dns: ^0.3.0
 
 
 dev_dependencies:
