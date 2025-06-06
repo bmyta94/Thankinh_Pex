@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:signature/signature.dart';
 
 void main() {
   runApp(const ThankinhPexApp());
@@ -15,20 +16,86 @@ class ThankinhPexApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
       ),
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final SignatureController signatureController = SignatureController(
+    penStrokeWidth: 2,
+    penColor: Colors.black,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Theo dõi PEX')),
-      body: const Center(
-        child: Text('Ứng dụng theo dõi điều trị thay huyết tương'),
+      appBar: AppBar(title: const Text('Đăng nhập')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListView(
+          children: [
+            const Text('Chức danh nghề nghiệp'),
+            TextField(
+              controller: titleController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'VD: Bác sĩ, Điều dưỡng...',
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('Họ tên đầy đủ'),
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Nhập họ tên...',
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text('Chữ ký'),
+            Container(
+              height: 150,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+              ),
+              child: Signature(
+                controller: signatureController,
+                backgroundColor: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                if (titleController.text.isEmpty ||
+                    nameController.text.isEmpty ||
+                    signatureController.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin')),
+                  );
+                  return;
+                }
+
+                // Tạm thời lưu thông tin trong bộ nhớ
+                final userTitle = titleController.text;
+                final userName = nameController.text;
+                print("Đăng nhập với: $userTitle - $userName");
+
+                // TODO: Điều hướng sang màn hình chính sau khi đăng nhập
+              },
+              child: const Text('Đăng nhập'),
+            ),
+          ],
+        ),
       ),
     );
   }
