@@ -18,7 +18,7 @@ class WifiService {
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
     );
-    print("Advertising: $advertisingStarted");
+    print("Advertising started: $advertisingStarted");
   }
 
   void startDiscovery(Function(String id, String data) onDataReceived) async {
@@ -36,7 +36,7 @@ class WifiService {
       onConnectionResult: (id, status) {},
       onDisconnected: (id) {},
     );
-    print("Discovery: $discoveringStarted");
+    print("Discovery started: $discoveringStarted");
   }
 
   void stopAll() {
