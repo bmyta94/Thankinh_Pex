@@ -2,32 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'form_dieu_duong.dart';
+import 'lich_su_theo_doi.dart';
 
 class YLenhRepository {
   static const _storageKey = 'y_lenh_list';
 
-  /// Load danh sách y lệnh từ bộ nhớ
   static Future<List<Map<String, dynamic>>> load() async {
     final prefs = await SharedPreferences.getInstance();
     final data = prefs.getStringList(_storageKey) ?? [];
     return data.map((e) => json.decode(e) as Map<String, dynamic>).toList();
   }
 
-  /// Lưu danh sách y lệnh vào bộ nhớ
   static Future<void> save(List<Map<String, dynamic>> list) async {
     final prefs = await SharedPreferences.getInstance();
     final data = list.map((e) => json.encode(e)).toList();
     await prefs.setStringList(_storageKey, data);
   }
 
-  /// Thêm 1 y lệnh vào danh sách
   static Future<void> add(Map<String, dynamic> yLenh) async {
     final list = await load();
     list.add(yLenh);
     await save(list);
   }
 
-  /// Xoá 1 y lệnh theo index
   static Future<void> delete(int index) async {
     final list = await load();
     list.removeAt(index);
@@ -85,7 +82,30 @@ class _DanhSachYLenhScreenState extends State<DanhSachYLenhScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Danh sách y lệnh")),
+      appBar: AppBar(
+        title: const Text("Danh sách y lệnh"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12, top: 16),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LichSuTheoDoiScreen()),
+                );
+              },
+              child: const Text(
+                'Lịch sử theo dõi',
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: ListView.builder(
         itemCount: yLenhList.length,
         itemBuilder: (context, index) {
@@ -117,4 +137,3 @@ class _DanhSachYLenhScreenState extends State<DanhSachYLenhScreen> {
     );
   }
 }
-
